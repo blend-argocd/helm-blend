@@ -1,4 +1,4 @@
-apiVersion: extensions/v1
+apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ include "opal-web.fullname" . }}
@@ -18,13 +18,10 @@ spec:
     - http:
         paths:
           - path: /*
-          - pathType: Prefix
             backend:
-              service:
-                name: ssl-redirect
-                port: use-annotation
+              serviceName: ssl-redirect
+              servicePort: use-annotation
           - path: /*
             backend:
-              service:
-                name: {{ include "opal-web.fullname" . }}
-                port: {{ .Values.service.port }}
+              serviceName: {{ include "opal-web.fullname" . }}
+              servicePort: {{ .Values.service.port }}
