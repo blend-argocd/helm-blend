@@ -14,11 +14,12 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 1.0.25
+# versions v1.0.x are charts dicrecly from Opal.dev, v1.5.x are Blend authored.
+version: 1.5.1
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
-appVersion: 1.0.272-694a3c0
+appVersion: 1.0.291-85ccb0a
 
 dependencies:
   - name: redis
