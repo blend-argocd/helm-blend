@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "opal-web.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    kots.io/exclude: {{ .Values.ingress.alb | quote }}
+    {{- if .Values.ingress.override }}
+    {{- toYaml .Values.ingress.overrideAnnotations | nindent 4 }}
+    {{- else }}
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.aws.certArn }}
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+    {{- end }}
+  labels:
+    app: {{ .Values.app }}
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /*
+            backend:
+              serviceName: ssl-redirect
+              servicePort: use-annotation
+          - path: /*
+            backend:
+              serviceName: {{ include "opal-web.fullname" . }}
+              servicePort: {{ .Values.service.port }}

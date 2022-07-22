@@ -1,0 +1,121 @@
+# Default values for opal.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# All unset variables are overridden at the command line with `--set`
+
+replicaCount: 2
+taskWorkersReplicaCount: 1
+
+image:
+  repository: <IMAGE_REPOSITORY>
+  pullPolicy: IfNotPresent
+
+database:
+  migrationDirection: <MIGRATION_DIRECTION>
+  dataSeedDirection: <DATA_SEED_DIRECTION>
+
+env:
+  auth0Issuer: <AUTH0_ISSUER>
+  auth0Audience: <AUTH0_AUDIENCE>
+  auth0Domain: <AUTH0_DOMAIN>
+  auth0ManagementClientId: <AUTH0_MANAGEMENT_CLIENT_ID>
+  auth0ManagementClientSecret: <AUTH0_MANAGEMENT_CLIENT_SECRET>
+  postgresUser: <POSTGRES_USER>
+  postgresPassword: <POSTGRES_PASSWORD>
+  postgresDb: <POSTGRES_DB>
+  postgresHost: <POSTGRES_HOST>
+  postgresSslMode: <POSTGRES_SSL_MODE>
+  postgresPort: <POSTGRES_PORT>
+  redisHost: <REDIS_HOST>
+  redisPort: <REDIS_PORT>
+  redisPassword: <REDIS_PASSWORD>
+  slackOAuth2Token: <SLACK_OAUTH2_TOKEN>
+  jiraApiToken: <JIRA_API_TOKEN>
+  pagerdutyApiToken: <PAGERDUTY_API_TOKEN>
+  databaseEncryptionKey: <DATABASE_ENCRYPTION_KEY>
+  authTokenEncryptionKey: <AUTH_TOKEN_ENCRYPTION_KEY>
+  opalApiEncryptionKey: <OPAL_API_ENCRYPTION_KEY>
+  secureCookieHashkey: <SECURE_COOKIE_HASHKEY>
+  slackClientId: <SLACK_CLIENT_ID>
+  slackClientSecret: <SLACK_CLIENT_SECRET>
+  slackSigningSecret: <SLACK_SIGNING_SECRET>
+  environment: <ENVIRONMENT>
+  auth0ClientSecret: <AUTH0_CLIENT_SECRET>
+  hostname: <HOSTNAME>
+  sendgridApiKey: <SENDGRID_API_KEY>
+  smtpServer: <SMTP_SERVER>
+  smtpPort: <SMTP_PORT>
+  mergeApiKey: <MERGE_API_KEY>
+  googleServiceAccountBaseSixtyFour: <GOOGLE_SERVICE_ACCOUNT_BASE_SIXTY_FOUR>
+  ginMode: <GIN_MODE>
+  sentryAuthToken: <SENTRY_AUTH_TOKEN>
+  enableRemoteLogging: <ENABLE_REMOTE_LOGGING>
+  vaultAddr: <VAULT_ADDR>
+  opalOnPremApiKey: <OPAL_ON_PREM_API_KEY>
+  linearApiKey: <LINEAR_API_KEY>
+  unidocLicenseKey: <UNIDOC_LICENSE_KEY>
+
+aws:
+  certArn: <CERT_ARN>
+  databaseEncryptionKmsArn: <DATABASE_ENCRYPTION_KMS_ARN>
+  opalApiEncryptionKmsArn: <OPAL_API_ENCRYPTION_KMS_ARN>
+
+log-forwarder:
+  logForwardingKey: <LOG_FORWARDING_KEY>
+  enabled: <LOG_FORWARDING_ENABLED>
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 3000
+  taskWorkerPort: 3000
+
+ingress:
+  alb: false
+  enabled: false
+  override: false
+  overrideAnnotations:
+    example: huzzah
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+  tls: []
+
+# These are matching the smallest Fargate resource combination
+resources:
+  requests:
+    cpu: 240m
+    memory: 450Mi
+  limits:
+    cpu: 240m
+    memory: 450Mi
+
+vault:
+  server:
+    ha:
+      enabled: true
+      replicas: 1
+      config: ""
+    standalone:
+      enabled: false
+    dataStorage:
+      enabled: false
+    auditStorage:
+      enabled: false
+    authDelegator:
+      enabled: false
+  injector:
+    enabled: false
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+app: opal-web
+taskWorkers: opal-web-task-workers

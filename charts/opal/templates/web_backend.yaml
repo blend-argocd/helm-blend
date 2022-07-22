@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "opal-web.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.app }}
+    tags.datadoghq.com/env: {{ .Values.env.environment }}
+    tags.datadoghq.com/service: {{ .Values.app }}
+    tags.datadoghq.com/version: {{ .Chart.AppVersion }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app }}
+        tags.datadoghq.com/env: {{ .Values.env.environment }}
+        tags.datadoghq.com/service: {{ .Values.app }}
+        tags.datadoghq.com/version: {{ .Chart.AppVersion }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/config2: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: {{ include "opal-web.fullname" . }}
+          image: {{ .Values.image.repository }}/opal-web_backend_self_hosted:{{.Chart.AppVersion}}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: DD_SERVICE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/service']
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+          envFrom:
+            - configMapRef:
+                name: {{ include "opal-web.fullname" . }}
+            - secretRef:
+                name: {{ include "opal-web.fullname" . }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: {{ .Values.service.targetPort }}
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /api/readiness
+              port: {{ .Values.service.targetPort }}
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+      initContainers:
+      - name: init
+        image: {{ .Values.image.repository }}/opal-web_backend_self_hosted:{{.Chart.AppVersion}}
+        envFrom:
+          - configMapRef:
+              name: {{ include "opal-web.fullname" . }}
+          - secretRef:
+              name: {{ include "opal-web.fullname" . }}
+        {{- if eq .Values.env.environment "dev" }}
+        command: [ 'sh', '-c', './migrations_helper up' ]
+        {{- else if eq .Values.env.environment "demo" }}
+        command: [ 'sh', '-c', './migrations_helper up' ]
+        {{- else }}
+        command: [ 'sh', '-c', './migrations_helper {{ .Values.database.migrationDirection }}' ]
+        {{- end }}

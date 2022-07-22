@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: oneoff
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.app }}
+    tags.datadoghq.com/env: {{ .Values.env.environment }}
+    tags.datadoghq.com/service: oneoff
+    tags.datadoghq.com/version: {{ .Chart.AppVersion }}
+  annotations:
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-delete-policy": "hook-succeeded, hook-failed"
+spec:
+  template:
+    spec:
+      containers:
+      - name: oneoff
+        image: {{ .Values.image.repository }}/opal-web_backend_self_hosted:{{.Chart.AppVersion}}
+        env:
+          - name: DD_SERVICE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/service']
+          - name: DD_AGENT_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+        envFrom:
+          - configMapRef:
+              name: {{ include "opal-web.fullname" . }}
+          - secretRef:
+              name: {{ include "opal-web.fullname" . }}
+        command: [ "sh", "-c", "--" ]
+        args: [ "./one_off" ]
+      restartPolicy: Never
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}

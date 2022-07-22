@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "opal-web.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+data:
+  APP_VERSION: {{ .Chart.AppVersion }}
+  AUTH0_ISSUER: {{ .Values.env.auth0Issuer }}
+  AUTH0_AUDIENCE: {{ .Values.env.auth0Audience }}
+  AUTH0_DOMAIN: {{ .Values.env.auth0Domain }}
+  AUTH0_MANAGEMENT_CLIENT_ID: {{ .Values.env.auth0ManagementClientId }}
+  GIN_MODE: {{ .Values.env.ginMode }}
+  POSTGRES_DB: {{ .Values.env.postgresDb | trim }}
+  POSTGRES_HOST: {{ .Values.env.postgresHost | trim }}
+  POSTGRES_SSL_MODE: {{ .Values.env.postgresSslMode }}
+  POSTGRES_PORT: {{ .Values.env.postgresPort | quote }}
+  REDIS_HOST: {{ .Values.env.redisHost | trim }}
+  REDIS_PORT: {{ .Values.env.redisPort | quote }}
+  VAULT_ADDR: {{ .Values.env.vaultAddr | trim }}
+  ENVIRONMENT: {{ .Values.env.environment }}
+  HOSTNAME: {{ .Values.env.hostname }}
+  SLACK_CLIENT_ID: {{ .Values.env.slackClientId | quote }}
+  ENABLE_REMOTE_LOGGING: {{ .Values.env.enableRemoteLogging | default "true" | quote }}
+  DD_ENV:  {{ .Values.env.environment }}
+  DD_VERSION: {{ .Chart.AppVersion }}
+  {{- if eq .Values.env.environment "on_prem" }}
+  SMTP_SERVER: {{ .Values.env.smtpServer }}
+  SMTP_PORT: {{ .Values.env.smtpPort | quote }}
+  ON_PREM_CUSTOMER_NAME: {{ .Values.env.onPremCustomerName }}
+  {{- end }}
