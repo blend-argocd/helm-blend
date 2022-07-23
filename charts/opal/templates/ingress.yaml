@@ -24,6 +24,7 @@ spec:
                 name: ssl-redirect
                 port: use-annotation
           - path: /*
+          - pathType: Prefix
             backend:
               service:
                 name: {{ include "opal-web.fullname" . }}
