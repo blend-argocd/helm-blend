@@ -2,6 +2,23 @@ apiVersion: v1
 entries:
   opal-web:
   - apiVersion: v2
+    appVersion: 1.0.291-85ccb0a
+    created: "2022-07-22T17:07:50.274874-07:00"
+    dependencies:
+    - name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.9.2
+    - name: vault
+      repository: https://helm.releases.hashicorp.com
+      version: 0.12.0
+    description: Deployment logic for core Opal app.
+    digest: 50b752d41ae489ed0b5d9b408f520dafcba24aeb9acca9fc129523bc64f70ab9
+    name: opal-web
+    type: application
+    urls:
+    - https://github.com/blend-argocd/helm-blend/releases/download/opal-web-1.5.1/opal-web-1.5.1.tgz
+    version: 1.5.1
+  - apiVersion: v2
     appVersion: 1.0.272-694a3c0
     created: "2022-07-21T19:31:58.612762-07:00"
     dependencies:
@@ -18,4 +35,4 @@ entries:
     urls:
     - https://github.com/blend-argocd/helm-blend/releases/download/opal-web-1.0.25/opal-web-1.0.25.tgz
     version: 1.0.25
-generated: "2022-07-21T19:31:58.612782-07:00"
+generated: "2022-07-22T17:07:50.274898-07:00"
