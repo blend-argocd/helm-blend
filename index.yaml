@@ -10,7 +10,7 @@ entries:
       version: 12.9.2
     - name: vault
       repository: https://helm.releases.hashicorp.com
-      version: 0.12.0
+      version: 0.51.0
     description: Deployment logic for core Opal app.
     digest: 50b752d41ae489ed0b5d9b408f520dafcba24aeb9acca9fc129523bc64f70ab9
     name: opal-web
